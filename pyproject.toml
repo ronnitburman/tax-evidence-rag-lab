@@ -1,0 +1,63 @@
+[project]
+name = "tax-evidence-rag-lab"
+version = "0.1.0"
+description = "Evidence-backed RAG lab built with LangChain, DeepSeek, and LangGraph — inspired by tax/legal research workflows."
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "TaxEvidence RAG Lab" }]
+readme = "README.md"
+
+dependencies = [
+    "python-dotenv",
+    "pydantic",
+    "pydantic-settings",
+    "typer",
+    "rich",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "chromadb",
+    "sentence-transformers",
+    "rank-bm25",
+    "langchain",
+    "langchain-core",
+    "langchain-community",
+    "langchain-text-splitters",
+    "langchain-deepseek",
+    "langgraph",
+    "langsmith",
+    "pypdf",
+    "beautifulsoup4",
+    "fastapi",
+    "uvicorn",
+    "tenacity",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[project.scripts]
+tax-rag = "cli.main:app"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
