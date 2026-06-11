@@ -1,13 +1,15 @@
 """POST /ask — Ask a tax-evidence question.
 
-Phase 0: Returns a placeholder response with the received question.
-Will delegate to core.ask::run_ask() once the RAG pipeline is wired.
+Delegates to core.ask::run_ask_core() — same logic as CLI.
+Full RAG pipeline (retrieve → rerank → validate) is pending.
 """
 
 from __future__ import annotations
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
+
+from core.ask import run_ask_core
 
 router = APIRouter(prefix="/ask", tags=["ask"])
 
@@ -38,23 +40,25 @@ class AskResponse(BaseModel):
 
     question: str
     answer: str
+    provider: str
+    model: str
+    error: str | None = None
     citations: list[str] = []
-    phase: str = "0 — scaffold"
 
 
 @router.post("", response_model=AskResponse)
 async def ask(body: AskRequest) -> AskResponse:
     """Ask a tax-evidence question using RAG.
 
-    Phase 0: Returns a placeholder. The full RAG pipeline
-    (retrieve → rerank → generate → validate) is pending.
+    Delegates to core.ask::run_ask_core() — same logic as CLI.
     """
+    result = run_ask_core(body.question)
+
     return AskResponse(
-        question=body.question,
-        answer=(
-            "[Phase 0 placeholder] The RAG pipeline is not yet implemented. "
-            f"Received question: '{body.question}'. "
-            "Subsequent phases will add retrieval, reranking, generation, and citation validation."
-        ),
+        question=result.question,
+        answer=result.answer,
+        provider=result.provider,
+        model=result.model,
+        error=result.error,
         citations=[],
     )
